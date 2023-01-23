@@ -49,11 +49,7 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.cluster (
     cluster_id integer NOT NULL,
-    star_id integer,
-    name character varying(50) NOT NULL,
-    galaxy_id integer,
-    planet_id integer,
-    moon_id integer
+    name character varying(50) NOT NULL
 );
 
 
@@ -68,7 +64,8 @@ CREATE TABLE public.galaxy (
     name character varying(50) NOT NULL,
     description text NOT NULL,
     number_of_planets bigint,
-    number_of_stars bigint
+    number_of_stars bigint,
+    cluster_id integer
 );
 
 
@@ -272,21 +269,21 @@ ALTER TABLE ONLY public.star ALTER COLUMN star_id SET DEFAULT nextval('public.st
 -- Data for Name: cluster; Type: TABLE DATA; Schema: public; Owner: freecodecamp
 --
 
-INSERT INTO public.cluster VALUES (1, 6, 'Venus supercluster', 1, 1, 1);
-INSERT INTO public.cluster VALUES (3, 6, 'Venus supercluster', 1, 2, 5);
-INSERT INTO public.cluster VALUES (4, 6, 'Venus supercluster', 1, 2, 8);
+INSERT INTO public.cluster VALUES (6, 'Virgo cluster');
+INSERT INTO public.cluster VALUES (7, 'Coma star cluster');
+INSERT INTO public.cluster VALUES (9, 'Messier 6 cluster');
 
 
 --
 -- Data for Name: galaxy; Type: TABLE DATA; Schema: public; Owner: freecodecamp
 --
 
-INSERT INTO public.galaxy VALUES (1, 'Milky way', 'Galaxy where humans reside', 5000000000, 1000000000);
-INSERT INTO public.galaxy VALUES (2, 'Andromeda', 'Will collision with our Milky way galaxy', NULL, NULL);
-INSERT INTO public.galaxy VALUES (4, 'Canis major dwarf', 'Closest to our Milky way galaxy', 1000000000, NULL);
-INSERT INTO public.galaxy VALUES (5, 'Antennae galaxies', 'Shaped in the form of an insects antennae', NULL, NULL);
-INSERT INTO public.galaxy VALUES (6, 'Backward galaxy', 'Seems to be rotating backwards', 1000000000, 50000000000);
-INSERT INTO public.galaxy VALUES (7, 'Cartwheel galaxy', 'One of the most complex galaxies in the known universe', NULL, NULL);
+INSERT INTO public.galaxy VALUES (4, 'Canis major dwarf', 'Closest to our Milky way galaxy', 1000000000, NULL, NULL);
+INSERT INTO public.galaxy VALUES (5, 'Antennae galaxies', 'Shaped in the form of an insects antennae', NULL, NULL, NULL);
+INSERT INTO public.galaxy VALUES (6, 'Backward galaxy', 'Seems to be rotating backwards', 1000000000, 50000000000, NULL);
+INSERT INTO public.galaxy VALUES (7, 'Cartwheel galaxy', 'One of the most complex galaxies in the known universe', NULL, NULL, NULL);
+INSERT INTO public.galaxy VALUES (1, 'Milky way', 'Galaxy where humans reside', 5000000000, 1000000000, 6);
+INSERT INTO public.galaxy VALUES (2, 'Andromeda', 'Will collision with our Milky way galaxy', NULL, NULL, 6);
 
 
 --
@@ -370,7 +367,7 @@ SELECT pg_catalog.setval('public.planet_planet_id_seq', 12, true);
 -- Name: quadrant_quadrant_id_seq; Type: SEQUENCE SET; Schema: public; Owner: freecodecamp
 --
 
-SELECT pg_catalog.setval('public.quadrant_quadrant_id_seq', 4, true);
+SELECT pg_catalog.setval('public.quadrant_quadrant_id_seq', 9, true);
 
 
 --
@@ -381,11 +378,11 @@ SELECT pg_catalog.setval('public.star_star_id_seq', 6, true);
 
 
 --
--- Name: cluster cluster_cluster_id_key; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
+-- Name: cluster cluster_name_key; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
 --
 
 ALTER TABLE ONLY public.cluster
-    ADD CONSTRAINT cluster_cluster_id_key UNIQUE (cluster_id);
+    ADD CONSTRAINT cluster_name_key UNIQUE (name);
 
 
 --
@@ -469,35 +466,11 @@ ALTER TABLE ONLY public.star
 
 
 --
--- Name: cluster cluster_galaxy_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
+-- Name: galaxy galaxy_cluster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
 --
 
-ALTER TABLE ONLY public.cluster
-    ADD CONSTRAINT cluster_galaxy_id_fkey FOREIGN KEY (galaxy_id) REFERENCES public.galaxy(galaxy_id);
-
-
---
--- Name: cluster cluster_moon_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
---
-
-ALTER TABLE ONLY public.cluster
-    ADD CONSTRAINT cluster_moon_id_fkey FOREIGN KEY (moon_id) REFERENCES public.moon(moon_id);
-
-
---
--- Name: cluster cluster_planet_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
---
-
-ALTER TABLE ONLY public.cluster
-    ADD CONSTRAINT cluster_planet_id_fkey FOREIGN KEY (planet_id) REFERENCES public.planet(planet_id);
-
-
---
--- Name: cluster cluster_star_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
---
-
-ALTER TABLE ONLY public.cluster
-    ADD CONSTRAINT cluster_star_id_fkey FOREIGN KEY (star_id) REFERENCES public.star(star_id);
+ALTER TABLE ONLY public.galaxy
+    ADD CONSTRAINT galaxy_cluster_id_fkey FOREIGN KEY (cluster_id) REFERENCES public.cluster(cluster_id);
 
 
 --
